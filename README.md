@@ -1,4 +1,4 @@
-<img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/9c9a60ad-aef9-4b85-ba55-cee640c91a69" /># 다중 이미지를 통한 3차원 복원(3D Reconstruction from Multiple Images)
+# 다중 이미지를 통한 3차원 복원 (3D Reconstruction from Multiple Images)
 
 3D Gaussian Splatting(3DGS) 기법을 활용하여 추출된 3차원 객체를 새로운 3D 환경 내에 자연스럽게 자동 배치하는 시스템을 개발하였다. 주성분 분석(PCA)을 통해 환경 데이터 내의 평면 후보군을 탐색 및 검출하고, 배치 시의 안정성, 충돌 여부, 접촉 면접 등을 종합적으로 평가하는 점수 함수 모델을 설계하였다. 이를 통해 2D 동영상으로부터 3D 모델을 생성하고 불필요한 노이즈 포인트를 필터링하는 과정을 거쳐, 사용자의 수동적인 개입을 최소화하면서 객체가 최적의 위치와 자세로 배경 내에 자동 배치되는 파이프라인을 구축하였다.
 
@@ -62,31 +62,37 @@
 
 ### 2.4 연구 개발 계획
  본 프로젝트에서는 3DGS 기반 객체 자동 배치 시스템을 구현하기 위해 다음과 같은 단계로 연구개발을 수행한다.
+ 
 1) 객체 및 환경 데이터 구축
 	- 다중 시점 이미지 촬영
 	- COLMAP을 이용한 카메라 포즈 추정
 	- 3D Gaussian Splatting 모델 생성
 	- 객체 및 환경 Point Cloud 추출
-(2) 객체 특성 분석
+
+2) 객체 특성 분석
 	- Point Cloud 전처리
 	- Voxel Downsampling 수행
 	- PCA 기반 객체 주축 추정
 	- 객체 방향 정보 계산
-(3) 환경 구조 분석
+
+3) 환경 구조 분석
 	- Plane Detection 수행
 	- 배치 가능한 평면 후보 탐색
 	- 후보 영역의 기하학적 특성 분석
-(4) 자동 배치 알고리즘 개발
+
+4) 자동 배치 알고리즘 개발
 	- 객체를 후보 평면에 가상 배치
 	- 접촉 면적 계산
 	- 충돌 여부 검사
 	- 무게중심 기반 안정성 평가
 	- Placement Score 계산
-(5) 최적 위치 선정 및 결과 생성
+
+5) 최적 위치 선정 및 결과 생성
 	- 후보 영역 중 최고 점수 위치 선택
 	- 객체 위치 및 자세 자동 결정
 	- 최종 3D 장면 생성 및 시각화
-(6) 성능 평가
+
+6) 성능 평가
 	- 다양한 객체 및 환경 조합 실험
 	- 배치 안정성 및 자연스러움 평가
 	- 자동 배치 성공률 분석
@@ -119,23 +125,54 @@ NVDIA GeForce RTX 5060 Ti
 ### 3.2 적용 기술 소개 및 적용 방법
 1) 3D Gaussian Splatting
  본 프로젝트에서는 객체와 환경을 3차원 공간으로 재구성하기 위해 3D Gaussian Splatting을 활용하였다. 사용자가 촬영한 다중 시점 이미지를 입력으로 사용하며, COLMAP을 통해 카메라 위치와 자세를 추정한 후 Gaussian 기반 장면 표현을 생성하였다. 이를 통해 객체와 환경에 대한 고품질 3차원 데이터를 확보할 수 있었다.
+
 2) Point Cloud 기반 기하 분석
  3DGS로 생성된 데이터를 Point Cloud 형태로 변환하여 기하학적 분석을 수행하였다. Point Cloud는 객체의 위치와 형상을 직접적으로 표현할 수 있어 배치 알고리즘 개발에 적합하였다. 또한 계산량 감소를 위해 Voxel Downsampling을 적용하여 포인트 수를 줄이고 처리 속도를 향상시켰다.
+<table>
+  <tr>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/f0e1da74-1d73-42c6-ad23-0495d4cb70ec" /></td>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/9720ef94-8f0e-42fe-8efa-be339e2971a4" /></td>
+  </tr>
+  <tr>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/4c3d8bf2-2dfc-43f6-8d13-070782a8ba40" /></td>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/ac9d331f-e7aa-4420-bff9-bf5d7b2a73de" /></td>
+  </tr>
+</table>
+
 3) PCA 기반 객체 방향 추정
  자동 배치 과정에서 객체의 방향을 결정하기 위해 PCA를 활용하였다. 객체 Point Cloud의 공분산 행렬을 계산하고 고유벡터를 추출하여 분산이 가장 큰 방향을 객체의 주축으로 정의하였다. 이를 통해 객체의 초기 자세를 자동으로 추정할 수 있었으며, 수동 방향 설정 없이 배치가 가능하도록 구현하였다.
+
 4) Plane Detection
  환경 내 배치 가능한 영역을 찾기 위해 RANSAC 기반 Plane Detection 알고리즘을 적용하였다. 환경 Point Cloud에서 평면을 반복적으로 탐색하여 바닥, 책상, 벤치와 같은 후보 영역을 추출하였다. 검출된 평면은 이후 자동 배치 알고리즘의 후보 위치로 활용하였다.
+
 5) Placement Scoring 알고리즘
  본 프로젝트의 핵심 기술은 객체 자동 배치를 위한 Placement Scoring 알고리즘이다.
 후보 평면마다 객체를 가상 배치한 뒤 “평면과의 접촉 정도, 환경과의 충돌 여부, 객체의 안정성, 객체의 배치 가능 면적”의 요소들을 종합하여 점수를 계산하고 가장 높은 점수를 갖는 위치를 최종 배치 위치로 선정하였다. 이를 통해 단순히 가장 큰 평면을 선택하는 것이 아니라 객체와 환경의 특성을 고려한 배치가 가능하게 하였다.
+<table>
+<tr>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/39dd8e22-2c4d-4a98-817e-de9914b825e2" /></td>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/ed571b0c-5d3d-4473-a4e5-4eedc1ff4d4a" /></td>
+  </tr>
+  <tr>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/558abf18-5f92-4a29-84de-b4b074cb83fe" /></td>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/bfbd0d76-43f7-4644-bb30-31b0efe536b0" /></td>
+  </tr>
+  <tr>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/9a9a7e47-e820-43a1-b013-72adc5f21775" /></td>
+    <td><img width="306" height="192" alt="image" src="https://github.com/user-attachments/assets/ccae856d-e309-4c5b-81f1-fee8c6d1f143" /></td>
+  </tr>
+</table>
 
 ### 3.3 기술적 어려움 및 해결 과정
 1) 객체 방향 추정 문제
  초기에는 객체가 어떤 방향으로 저장되어 있는지 알 수 없다는 문제가 존재하였다. 예를 들어 인형 데이터의 경우 촬영 방식에 따라 누워 있는 상태로 저장될 수 있으며, 이를 그대로 배치할 경우 비정상적인 결과가 발생하였다. 이를 해결하기 위해 PCA를 이용하여 객체의 주축을 계산하고 자동으로 방향을 정렬하는 방법을 적용하였다. 그 결과 객체의 초기 자세를 자동으로 추정할 수 있었으며 다양한 객체에 대해 일관된 배치가 가능해졌다.
+
 2) 대용량 Point Cloud 처리 문제
  3DGS에서 생성된 Point Cloud는 수십만 개 이상의 포인트를 포함하고 있어 Plane Detection 및 충돌 검사 수행 시 계산량이 크게 증가하였다. 이를 해결하기 위해 Voxel Downsampling을 적용하여 Point Cloud 밀도를 조절하였다. 이를 통해 객체 형상의 특징은 유지하면서도 처리 시간을 크게 단축할 수 있었다.
+
 3) 적절한 배치 위치 선정 문제
  환경 내에서 검출된 평면 중 가장 넓은 평면이 항상 최적의 배치 위치가 되는 것은 아니었다. 예를 들어 벤치가 존재하는 환경에서는 바닥보다 벤치 위에 객체를 배치하는 것이 더욱 자연스러운 결과를 생성할 수 있다. 이를 해결하기 위해 단순 평면 검출이 아닌 Placement Scoring 방식을 설계하였다. 접촉 면적, 안정성, 충돌 여부 등을 종합적으로 평가하여 가장 자연스러운 위치를 선택하도록 구현하였다.
+
 4) 환경 데이터 정렬 문제
  촬영된 환경 데이터는 항상 수평 상태로 재구성되지 않았으며, 이로 인해 Plane Detection 결과가 불안정하게 나타나는 문제가 발생하였다. 이를 해결하기 위해 검출된 평면의 법선 벡터를 이용하여 환경을 정렬하고, 수평 기준을 자동으로 설정하는 방식을 적용하였다. 이를 통해 다양한 촬영 환경에서도 안정적인 평면 검출이 가능해졌다.
 
