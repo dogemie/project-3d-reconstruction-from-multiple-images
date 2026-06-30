@@ -10,9 +10,9 @@
 /nerf_data/.tmp.drivedownload
 /output
 /log
-/archive
+# /archive
 /utils
-/notebook
+# /notebook
 /reference
 *.mp4
 /nerf-data
