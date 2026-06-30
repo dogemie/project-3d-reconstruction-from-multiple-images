@@ -10,6 +10,12 @@
 /nerf_data/.tmp.drivedownload
 /output
 /log
+/archive
+/utils
+/notebook
+/reference
+*.mp4
+/nerf-data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
