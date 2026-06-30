@@ -8,14 +8,14 @@
 /images_origin
 /nerf_data/.tmp.driveupload
 /nerf_data/.tmp.drivedownload
-/output
-/log
+# /output
+# /log
 # /archive
 # /utils
 # /notebook
-/reference
-*.mp4
-/nerf-data
+# /reference
+# *.mp4
+# /nerf-data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
